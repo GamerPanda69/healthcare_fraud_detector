@@ -1,0 +1,27 @@
+services:
+  #THE MESSAGE QUEUE
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+      
+  #THE RESULTS DATABASE
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: scholar
+      POSTGRES_PASSWORD: fraud_password
+      POSTGRES_DB: claims_db
+    ports:
+      - "5432:5432"
+  
+  #THE FRONT DOOR(API)
+  ingestion-api:
+    build:
+      context: .
+      dockerfile: ingestion_api/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - db  
